@@ -1,44 +1,40 @@
+version: '3.8'
+
 services:
-  app:
+  # Development service with hot-reload
+  app-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: syntha-forge-dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+      - ./index.html:/app/index.html
+      - ./vite.config.ts:/app/vite.config.ts
+      - ./tailwind.config.ts:/app/tailwind.config.ts
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./tsconfig.app.json:/app/tsconfig.app.json
+    environment:
+      - NODE_ENV=development
+    networks:
+      - syntha-forge-network
+    restart: unless-stopped
+
+  # Production service with Nginx
+  app-prod:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: syntha-forge-prod
     ports:
-      - "8081:80"
-    environment:
-      - NODE_ENV=production
+      - "8080:80"
+    networks:
+      - syntha-forge-network
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "wget --spider -q http://localhost:80/ || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
 
-  api:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
-    ports:
-      - "4001:4000"
-    environment:
-      - NODE_ENV=production
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "wget --spider -q http://localhost:4000/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-
-  # Development service (uncomment when needed)
-  # dev:
-  #   build:
-  #     context: .
-  #     target: build
-  #   ports:
-  #     - "3000:3000"
-  #   volumes:
-  #     - .:/app
-  #     - /app/node_modules
-  #   environment:
-  #     - NODE_ENV=development
-  #   command: npm run dev
+networks:
+  syntha-forge-network:
+    driver: bridge

@@ -71,25 +71,3 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
-
-## Local Docker (added by assistant)
-
-This project includes a Docker setup that runs the frontend (nginx) and a small Express API.
-
-Quick commands (PowerShell):
-
-```powershell
-docker compose up --build -d
-docker compose ps
-docker compose logs -f app
-docker compose logs -f api
-docker compose down
-```
-
-Access:
-
-- [Frontend](http://localhost:8080)
-- [Backend direct](http://localhost:4000)
-- [Backend proxied](http://localhost:8080/api/message)
-
-The nginx config proxies `/api/*` to the `api` service so the frontend can call `/api/message` without CORS.
